@@ -1,0 +1,75 @@
+1.
+"A Clockwork Orange" - Text
+42 - int or tinyint
+09/02/1945 - Date
+98.7 - Float
+$15.99 - Currency, this may depend on the database we're using, and it could be stored as either text or float.
+
+2.
+We would use a database when we may have multiple access points to the data we're working with, when the data may be changing frequently or updated, or when we want these changes to persist despite the application/program utilizing it closing. In contrast, we might use a text file when we know the data we are working with will be immutable, will only be coming from a single source, or will only need to be accessible while it is being used in one specific instance, rather than be available to many simultaneously.
+
+3.
+SQL is declarative, meaning we simply write our queries in such a way that we do not need to worry about what may be happening at the lower level - we do not need to write out the specific sorting/searching algorithms to handle our data (procedural), just the plain text for what data we would like to see in a certain way. For instance, we simply write the name of the column we wish to view from a specific table - we don't have to worry about gathering all the rows associated with that column variable, or finding the table itself. Ex: SELECT email FROM users; the database engine will worry about getting all the rows for the email column from the user table, we just had to tell it that's what we wanted.
+
+4.
+The database system works by being populated with values for specific rows and column intersections, which will create specific tables. We may have rows/columns and values for each, so we mostly concern ourselves with how to arrange and access that data as needed - we don't have to worry about where the data is stored in memory, or whether it is sorted, or how to search for it. If we want to view (query) all the data for all the users, we may select all the columns (*) from our users table and it would show us all that information - the values associated for specific rows/columns. When we perform our query, the compiling language will break it down into lower-level actions and perform many functions/tasks behind the scenes that we don't necessarily need to concern ourselves with, and ultimately return the query we asked for - a table of all the columns, for all the rows, with their specific values.
+
+5.
+Row - each row represents a unique entry in the database, which may have values for many different columns, or variables, associated with that unique entry.
+Column - essentially, properties or variables that can be assigned for each unique row, thus associating varying data types/information for a single unique entry.
+Value - A unique datum that can be associated for a specific row and column, for example, our first value in a database with columns NAME and USERID may be a userid with a value of 1 - this value exists for a unique row entry and for that column identifier, USERID.
+Table - a collection of rows and columns that may be populated with certain values.
+
+6. In a table, we could use:
+int
+text
+date
+
+7.
+SELECT date, amount
+FROM payments;
+// This query would show us the rows and values associated only with the columns date and amount from the payments table.
+
+SELECT amount
+FROM payments
+WHERE amount > 500;
+// This query would show us the rows/values associated only with the amount column where those values are greater than 500, from the payments table.
+
+SELECT *
+FROM payments
+WHERE payee = 'Mega Foods';
+// This query would show us all the columns/rows from the payments table, but only where the column payee has values equal to 'Mega Foods'.
+
+8.
+a)
+**Query #1**
+
+    SELECT email, signup
+    FROM users
+    WHERE name = 'DeAndre Data';
+
+| email             | signup                   |
+| ----------------- | ------------------------ |
+| datad@comcast.net | 2008-01-20T00:00:00.000Z |
+
+b)
+**Query #2**
+
+    SELECT userid
+    FROM users
+    WHERE email = 'aleesia.algorithm@uw.edu';
+
+| userid |
+| ------ |
+| 1      |
+
+c)
+**Query #3**
+
+    SELECT *
+    FROM users
+    WHERE userid = 4;
+
+| userid | name           | email             | signup                   |
+| ------ | -------------- | ----------------- | ------------------------ |
+| 4      | Brandy Boolean | bboolean@nasa.gov | 1999-10-15T00:00:00.000Z |
