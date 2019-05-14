@@ -26,18 +26,42 @@ text
 date
 
 7.
-SELECT date, amount
-FROM payments;
+**Query #1**
+
+    SELECT date, amount
+    FROM payments;
+
+| date                     | amount    |
+| ------------------------ | --------- |
+| 2016-05-01T00:00:00.000Z | 1500.0000 |
+| 2016-05-10T00:00:00.000Z | 37.0000   |
+| 2016-05-15T00:00:00.000Z | 124.9300  |
+| 2016-05-23T00:00:00.000Z | 54.7200   |
+
 // This query would show us the rows and values associated only with the columns date and amount from the payments table.
 
-SELECT amount
-FROM payments
-WHERE amount > 500;
+**Query #2**
+
+    SELECT amount
+    FROM payments
+    WHERE amount > 500;
+
+| amount    |
+| --------- |
+| 1500.0000 |
+
 // This query would show us the rows/values associated only with the amount column where those values are greater than 500, from the payments table.
 
-SELECT *
-FROM payments
-WHERE payee = 'Mega Foods';
+**Query #3**
+
+    SELECT *
+    FROM payments
+    WHERE payee = 'Mega Foods';
+
+| date                     | payee      | amount   | memo      |
+| ------------------------ | ---------- | -------- | --------- |
+| 2016-05-15T00:00:00.000Z | Mega Foods | 124.9300 | Groceries |
+
 // This query would show us all the columns/rows from the payments table, but only where the column payee has values equal to 'Mega Foods'.
 
 8.
