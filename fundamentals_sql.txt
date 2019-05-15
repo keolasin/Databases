@@ -60,26 +60,29 @@ ALTER TABLE wedding DROP column table_number;
 
 5. Library table:
 CREATE TABLE library (
-  ISBN integer,
+  isbn bigint,
   title text,
   author text,
   genre text,
   pubDate date,
   total integer,
   available integer
-)
+);
 
 INSERT INTO library (isbn, title, author, genre, pubDate, total, available)
   VALUES
-  (978-0553213119, 'Moby Dick', 'Herman Melville', 'Classical', 10/18/1851, 2, 1)
-  (978-0525520375, 'There There', 'Tommy Orange', 'Fiction', 06/05/2018, 40, 20)
-  (978-1406711288, 'The Stranger', 'Albert Camus', 'Philosophy', 06/01/1941, 30, 15);
+  (9780553213119, 'Moby Dick', 'Herman Melville', 'Classical', '1851-10-18', 2, 1),
+  (9780525520375, 'There There', 'Tommy Orange', 'Fiction', '2018-06-05', 40, 20),
+  (9781406711288, 'The Stranger', 'Albert Camus', 'Philosophy', '1941-06-01', 30, 15);
 
 UPDATE library
 SET available = 29
-WHERE isbn = 978-1406711288;
+WHERE isbn = 9781406711288;
 
-DELETE FROM library WHERE isbn = 978-0525520375;
+DELETE FROM library WHERE isbn = 9780525520375;
+
+SELECT *
+FROM library;
 
 6. Spacecrafts table:
 CREATE TABLE spacecrafts (
@@ -95,12 +98,15 @@ CREATE TABLE spacecrafts (
 
 INSERT INTO spacecrafts (id, name, launch, origin, mission, orbiting, operating, distance)
   VALUES
-  ( 1, 'Tobias', 05/13/2050, 'Norway', 'Mine a space asteroid for gold', 'XE-2314', TRUE, 500000 )
-  ( 2, 'SS Brigg', 01/17/2032, 'Germany', 'Seeking extraterrestrial life', 'Venus', TRUE, 162000000 )
-  ( 3, 'Ares', 02/11/2021, 'New Canada', 'Destroy other spacecrafts, 'Mars', FALSE, 33900000 )
+  ( 1, 'Tobias', '2050-05-13', 'Norway', 'Mine a space asteroid for gold', 'XE-2314', TRUE, 500000 ),
+  ( 2, 'SS Brigg', '2020-01-17', 'Germany', 'Seeking extraterrestrial life', 'Venus', TRUE, 162000000 ),
+  ( 3, 'Ares', '2021-02-14', 'New Canada', 'Destroy other spacecrafts', 'Mars', FALSE, 33900000 );
 
 DELETE FROM spacecrafts WHERE id = 2;
 UPDATE spacecrafts SET operating = FALSE WHERE id = 1;
+
+SELECT *
+FROM spacecrafts;
 
 7. Emails table:
 CREATE TABLE emails (
@@ -109,19 +115,22 @@ CREATE TABLE emails (
   sender text,
   recipients text,
   body text,
-  timestamp timestamp,
-  read boolean,
+  times timestamp,
+  isRead boolean,
   chainid integer
 );
 
-INSERT INTO emails (id, subject, sender, recipients, body, timestamp, read, chainid)
+INSERT INTO emails (id, subject, sender, recipients, body, times, isRead, chainid)
   VALUES
-  ( 1, 'You WON!!!', tim@email.com, john@email.net, "You've won this new electric blender! Click here!", 1557899013, FALSE, 4 )
-  ( 2, 'Happy mother's day!', son@email.com, mom@email.net, "Happy mothers day mom, you're the greatest", 1557899023, TRUE, 2 )
-  ( 3, 'Homework?', student@email.com, teacher@email.net, "I missed class today, I was wondering if there was any homework?", 1557899016, TRUE, 1 )
+  ( 1, 'You WON!!!', 'tim@email.com', 'john@email.net', "You've won this new electric blender! Click here!", '2019-05-15 11:15:38', FALSE, 4 ),
+  ( 2, 'Happy mother\'s day!', 'son@email.com', 'mom@email.net', "Happy mothers day mom, you\'re the greatest", '2019-05-15 08:23:30', TRUE, 2 ),
+  ( 3, 'Homework?', 'student@email.com', 'teacher@email.net', "I missed class today, I was wondering if there was any homework?", '2019-05-12 21:48:59', TRUE, 1 );
 
-  DELETE FROM emails WHERE id = 1;
+DELETE FROM emails WHERE id = 1;
 
-  UPDATE emails
-  SET read = FALSE
-  WHERE id = 3;
+UPDATE emails
+SET isRead = FALSE
+WHERE id = 3;
+
+SELECT *
+FROM emails;
