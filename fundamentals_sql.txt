@@ -1,0 +1,127 @@
+1.
+Adding:
+INSERT INTO table_name (column1, column2, id)
+VALUES ('value1', 123, 1);
+
+Updating:
+We can use multiple arguments/operators for our SET and WHERE, using SET to specify the value for a column, and WHERE to choose a specific row/circumstance depending on the arguments.
+Ex:
+UPDATE table_name
+SET column1='xyz'
+WHERE id=1;
+
+To update/alter the schema, we use ALTER TABLE, and can optionally set records to have a default value for that column:
+ALTER TABLE table_name
+ADD COLUMN name text
+SET DEFAULT 'John Doe';
+
+Deleting:
+To delete a record/row:
+DELETE FROM table_name
+WHERE id=1;
+
+To delete columns in the schema:
+ALTER TABLE table_name DROP COLUMN column2;
+
+To delete the table in its entirety:
+DROP TABLE table_name;
+
+2.
+The structure for our SQL commands is straight-forward since it is declarative, however we must issue our commands in a certain order. Typically, we will start with a command (in all caps, such as SELECT) followed by an argument (*, name, column2, etc). We can further modify that initial command, but only as long as we follow the expected order - for instance, we first have to specify which table to SELECT using FROM before we can create conditionals using WHERE:
+SELECT *
+FROM users
+WHERE id=2;
+If our WHERE and FROM statements were swapped, we would not have a successful query.
+
+3.
+There are many data types that can be used in tables - for instance, we can to keep track of inventory in a store numerically (integer), we may assign each product a unique id (primary key for that table, again numeric/integer), then provide a description of it (text), the date it was added to the inventory (date), its cost (currency, money, or numeric), and the timestamp when it was sold (timestamp).
+
+4. Wedding dinner table schema:
+first_name and last_name would be text data types, since we expect their names to be some text (Jane Doe, John Smith, etc).
+guests would be a numeric integer data type, since we want to know the exact number.
+RSVP would be a boolean data type, since we only need to track if they've responded to attend or not attend.
+Number of meals would be a numeric float data type, since we are interested in tracking decimals with the 1/2 meal for children.
+
+CREATE TABLE wedding (
+  first_name text,
+  last_name text,
+  RSVP boolean,
+  guests integer,
+  meals float
+);
+
+ALTER TABLE wedding ADD COLUMN thanked boolean;
+
+ALTER TABLE wedding DROP COLUMN meals;
+
+ALTER TABLE wedding ADD COLUMN table_number int;
+
+ALTER TABLE wedding DROP column table_number;
+
+5. Library table:
+CREATE TABLE library (
+  ISBN integer,
+  title text,
+  author text,
+  genre text,
+  pubDate date,
+  total integer,
+  available integer
+)
+
+INSERT INTO library (isbn, title, author, genre, pubDate, total, available)
+  VALUES
+  (978-0553213119, 'Moby Dick', 'Herman Melville', 'Classical', 10/18/1851, 2, 1)
+  (978-0525520375, 'There There', 'Tommy Orange', 'Fiction', 06/05/2018, 40, 20)
+  (978-1406711288, 'The Stranger', 'Albert Camus', 'Philosophy', 06/01/1941, 30, 15);
+
+UPDATE library
+SET available = 29
+WHERE isbn = 978-1406711288;
+
+DELETE FROM library WHERE isbn = 978-0525520375;
+
+6. Spacecrafts table:
+CREATE TABLE spacecrafts (
+  id integer,
+  name text,
+  launch date,
+  origin text,
+  mission text,
+  orbiting text,
+  operating boolean,
+  distance integer
+);
+
+INSERT INTO spacecrafts (id, name, launch, origin, mission, orbiting, operating, distance)
+  VALUES
+  ( 1, 'Tobias', 05/13/2050, 'Norway', 'Mine a space asteroid for gold', 'XE-2314', TRUE, 500000 )
+  ( 2, 'SS Brigg', 01/17/2032, 'Germany', 'Seeking extraterrestrial life', 'Venus', TRUE, 162000000 )
+  ( 3, 'Ares', 02/11/2021, 'New Canada', 'Destroy other spacecrafts, 'Mars', FALSE, 33900000 )
+
+DELETE FROM spacecrafts WHERE id = 2;
+UPDATE spacecrafts SET operating = FALSE WHERE id = 1;
+
+7. Emails table:
+CREATE TABLE emails (
+  id integer,
+  subject text,
+  sender text,
+  recipients text,
+  body text,
+  timestamp timestamp,
+  read boolean,
+  chainid integer
+);
+
+INSERT INTO emails (id, subject, sender, recipients, body, timestamp, read, chainid)
+  VALUES
+  ( 1, 'You WON!!!', tim@email.com, john@email.net, "You've won this new electric blender! Click here!", 1557899013, FALSE, 4 )
+  ( 2, 'Happy mother's day!', son@email.com, mom@email.net, "Happy mothers day mom, you're the greatest", 1557899023, TRUE, 2 )
+  ( 3, 'Homework?', student@email.com, teacher@email.net, "I missed class today, I was wondering if there was any homework?", 1557899016, TRUE, 1 )
+
+  DELETE FROM emails WHERE id = 1;
+
+  UPDATE emails
+  SET read = FALSE
+  WHERE id = 3;
