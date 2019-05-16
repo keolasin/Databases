@@ -4,6 +4,8 @@ FROM table_name
 WHERE column > value;
 
 2.
+
+
 3.
 SELECT name, gender, age
 FROM dogs
@@ -25,3 +27,108 @@ WHERE breed NOT LIKE '%shepherd%';
 SELECT id, age, weight, breed
 FROM dogs
 WHERE weight > 60 OR breed = 'great dane';
+
+4.
+The first query,
+SELECT name, adoption_date FROM cats;
+will show us the name and adoption_date columns for all the records from the cats table.
+
+The second query,
+SELECT name, age FROM cats;
+will show us the name and age columns for all the records from the cats table.
+
+5.
+SELECT *
+FROM cats;
+
+SELECT name, gender
+FROM cats
+WHERE age = 7;
+
+SELECT DISTINCT name
+FROM cats;
+
+6.
+< Less than comparison between two values. Ex: Finding a group younger than age 50:
+SELECT name, age
+FROM users
+WHERE age < 50;
+
+> Greater than comparison between two values. Ex: Selecting all records with price greater than 40:
+SELECT id, product, price
+FROM inventory
+WHERE price > 40;
+
+= Equal to, when two values are the same. Ex: Finding a specific user/record in a group by name:
+SELECT *
+FROM users
+WHERE name = 'Bran Stark';
+
+<= Less than or equal to for two values. Ex: Finding all families with 4 or fewer children:
+SELECT *
+FROM families
+WHERE children <= 4;
+
+>= Greater than or equal to for two values. Ex: Finding all continents with 7 or more kingdoms/countries.
+SELECT *
+FROM continents
+WHERE kingdoms >= 7;
+
+<> Less than or greater than, for comparing two values. Ex: Finding all values exclusive of the one listed, such as finding all records except for those in a certain year;
+SELECT *
+FROM raintable
+WHERE year <> 2010;
+
+IS DISTINCT FROM Used similar to <>, but for when one of the values could be NULL, as NULL is otherwise equated to an unknown value otherwise. Ex: If we suspect some questions on a questionaire are blank, and want to compare if participants answered blank on one question compared with answering another:
+SELECT id, question1, question2
+FROM survey
+WHERE question1 IS DISTINCT FROM question2;
+
+IS TRUE/ IS FALSE used when an expression could be NULL, always returns true or false.
+!= Is not equal to, comparing two values
+NOT For negating operators or making a is not equal to comparison, the expression for equal false for this to return records
+AND For including expressions, will return true only when both expressions are true
+OR For linking expressions, will return true as long as just one expression is true
+LIKE Used when comparing text strings to a value and using wildcard characters (%, *)
+IS NULL Used to check if the value in a cell is equal to NULL
+BETWEEN To check if a value is between two values (X>=10 AND X<=15)
+
+7.
+**Query #1**
+Should show us just the names column with only the records for the female cats.
+
+    SELECT name
+    FROM cats
+    WHERE gender = 'F';
+
+| name     |
+| -------- |
+| Seashell |
+| Nala     |
+
+**Query #2**
+Should show us the name column and all the records where the age is not 3.
+
+    SELECT name
+    FROM cats
+    WHERE age <> 3;
+
+| name     |
+| -------- |
+| Mushi    |
+| Seashell |
+| Victoire |
+| Nala     |
+
+**Query #3**
+Should only show us the id column for all records that are Male and their name is not mushi.
+
+    SELECT id
+    FROM cats 
+    WHERE name != 'mushi' AND gender = 'M';
+
+| id  |
+| --- |
+| 1   |
+| 3   |
+| 4   |
