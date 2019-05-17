@@ -4,6 +4,12 @@ FROM table_name
 WHERE column > value;
 
 2.
+This is kinda ridiculous, but I live near safeway and go there frequently so it's the first thing I thought of:
+(S)a(F)e(W)ay (L)ogic
+S- SELECT
+F- FROM
+W- WHERE
+L- LIKE
 
 
 3.
@@ -84,14 +90,45 @@ SELECT id, question1, question2
 FROM survey
 WHERE question1 IS DISTINCT FROM question2;
 
-IS TRUE/ IS FALSE used when an expression could be NULL, always returns true or false.
-!= Is not equal to, comparing two values
-NOT For negating operators or making a is not equal to comparison, the expression for equal false for this to return records
-AND For including expressions, will return true only when both expressions are true
-OR For linking expressions, will return true as long as just one expression is true
-LIKE Used when comparing text strings to a value and using wildcard characters (%, *)
-IS NULL Used to check if the value in a cell is equal to NULL
-BETWEEN To check if a value is between two values (X>=10 AND X<=15)
+IS TRUE/ IS FALSE used when an expression could contain NULL, always returns true or false. Ex: We want to check if a submission has been input into our system, but some of the submissions may be blank.
+SELECT *
+FROM homework
+WHERE submission IS TRUE;
+
+!= Is not equal to, comparing two values. Opposite to equal to (=), we use this when we want to select everything other than our specified value, such as looking at demographic data and excluding an 'Other' option:
+SELECT *
+FROM demographics
+WHERE ethnicity != 'Other';
+
+NOT For negating operators or making a is not equal to comparison, the expression for equal false for this to return records. If we have a list of books in the library, and we want to exclude all titles beginning with 'The':
+SELECT title, author
+FROM books
+WHERE title NOT LIKE 'The%';
+
+AND For including expressions, will return true only when both expressions are true. When we want to have two expressions, for instance, selecting all patients with a low blood pressure and diabetes:
+SELECT patientId, sysBp, diabetic
+FROM patients
+WHERE sysBp < 100 AND diabetic IS TRUE;
+
+OR For linking expressions, will return true as long as just one expression is true. Let's say we're happy with ice cream shops that have either of our two favourite flavours:
+SELECT name, location
+FROM iceCreameries
+WHERE flavour LIKE '%chocolate%' OR flavour LIKE '%lavender%';
+
+LIKE Used when comparing text strings to a value and using wildcard characters (%, *). Let's say we want to have only teammates with names that start with B:
+SELECT name, position
+FROM roster
+WHERE name LIKE 'B%';
+
+IS NULL Used to check if the value in a cell is equal to NULL. Maybe we want to find all questions that were left blank on a survey:
+SELECT *
+FROM survey
+WHERE question IS NULL;
+
+BETWEEN To check if a value is between two values (X>=10 AND X<=15). Let's say we want to look at all blood samples in a certain pH range:
+SELECT id, pH, rH
+FROM bloodBank
+WHERE pH BETWEEN 7.45 AND 7.50;
 
 7.
 **Query #1**
