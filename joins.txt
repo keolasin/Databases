@@ -1,0 +1,169 @@
+1. How do you find related data held in two separate data tables?
+By joining tables, we can assort data from two separate tables - to find related data between tables, we might employ the use of primary and foreign keys, then use a SQL JOIN statement to combine the tables according. For example, finding all students enrolled in a certain major at a university, given a table that might contain solely student info and it's primary key 'id', and a degrees table, containing all info about the degree and a foreign key of student_id:
+SELECT students.name, degrees.major
+FROM students
+JOIN degrees
+ON students.id = degrees.student_id;
+
+2. Explain, in your own words, the difference between an INNER JOIN, LEFT OUTER JOIN, and RIGHT OUTER JOIN. Give a real-world example for each.
+INNER JOIN - an inner join will attempt to locate all records between the two tables for the matching ON expression (usually a primary key and foreign key match) and show only those records that match both in the resulting query (essentially, an AND logic operator, hence the 'INNER' JOIN).
+
+LEFT OUTER JOIN - Assuming a table on the left and right represented in a venn diagram, our LEFT OUTER JOIN will function similarly to the INNER JOIN except that for all the records in the right table that do not have a value for a record in our left table, NULL will be placed in that rightmost table, so that we still see all the queried records in the LEFT table, and see that there were NULL or no associated values from the RIGHT table.
+
+RIGHT OUTER JOIN - This case is similar to the LEFT OUTER JOIN except that we compare all records in the RIGHT table to those in the LEFT, and for those records in the LEFT table that do not have a value (NULL), those will be included with the NULL value. Again, the notable difference is from that of the INNER JOIN, which would simply exclude those records (LEFT or RIGHT) that have NULL values. With the RIGHT OUTER JOIN, we can see all the records in the RIGHT table, and if there are associated NULL values in the LEFT.
+
+3. Define primary key and foreign key. Give a real-world example for each.
+Primary key - this key is the unique key in that table for that record. For example, if we had a list of employees and assigned them a unique employee id number (EID), we would have a table with employee info (name, hire date, job, etc) and a unique EID for each of those records.
+Foreign key - this is the key in a table that references (is equal to) the primary key of another table. For example, if we had our same employee table, we may have a foreign key stored in it for the specific department that employee belongs to - in the department table, that key would be it's primary key, however because we are referencing it from the employee table, it is the foreign key in the employee table (remember, the primary key in the employee table is the EID).
+
+4. Define aliasing.
+Aliasing in SQL is essentially renaming or assigning variable names to certain expressions/columns. For instance, we may have a SELECT COUNT(*) expression - the resulting query will display COUNT(*) as the column title - maybe we want it to say simply 'Count' or 'Hits' instead. We would use the keyword AS to accomplish that task: SELECT COUNT(*) AS 'Hits'. We can similarly employee aliasing in our expressions to help avoid typing long or confusing expressions repetitively in our queries, for example:
+SELECT e.name AS 'Name', d.description AS 'Description'
+FROM employees AS e
+JOIN department AS d
+ON e.id = d.employee_id;
+
+5. Change this query so that you are using aliasing:
+SELECT 
+  p.name AS 'Name',
+  c.salary AS 'Salary', 
+  c.vacation_days AS 'Vacation days'
+FROM professor AS p
+JOIN compensation AS c
+ON p.id = c.professor_id;
+
+6. Why would you use a NATURAL JOIN? Give a real-world example.
+NATURAL JOIN is essentially the same as INNER JOIN, except that it will combine columns that are the same for the queried matching primary/foreign keys. Let's say we SELECT * in an INNER JOIN: we would get a result with all records from each table (that match the queried keys in an AND fashion), and that we had a primary key of product_id in one table, and it's related foreign key in another table of the same name (product_id). Rather than seeing the product_id column twice (since we've used SELECT *), NATURAL JOIN will omit the redundant column.
+
+7. Using this Employee schema and data, write queries to find the following information:
+List all employees and all shifts.
+This join does not make use of the provided scheduled_shifts, but will show us all the shifts and all the employees, regardless when they're scheduled, since some shifts are left blank, and some employees are not scheduled.
+SELECT *
+FROM shifts AS s
+LEFT OUTER JOIN employees AS e
+ON e.id = s.id
+ORDER BY s.id;
+
+A more useful JOIN might be to see all the scheduled shifts, and if there are any openings (NULL) so that we can plan for and schedule someone:
+WITH prev_query AS (
+	SELECT ss.shift_id, e.name
+	FROM scheduled_shifts AS ss
+	LEFT JOIN employees AS e
+	ON e.id = ss.employee_id
+	ORDER BY ss.shift_id
+)
+SELECT 
+	s.id,
+    pq.name,
+	s.date,
+	s.start_time
+FROM shifts AS s
+LEFT JOIN prev_query AS pq
+ON s.id = pq.shift_id
+ORDER BY s.id;
+
+8.
+Using this Adoption schema and data, please write queries to retrieve the following information and include the results:
+**Query #1**
+Create a list of all volunteers. If the volunteer is fostering a dog, include each dog as well.
+
+    SELECT v.first_name AS Volunteer, d.name AS Dog
+    FROM volunteers AS v
+    LEFT OUTER JOIN dogs AS d
+    ON v.foster_dog_id = d.id;
+
+| volunteer | dog       |
+| --------- | --------- |
+| Rubeus    | Munchkin  |
+| Marjorie  | Marmaduke |
+| Sirius    |           |
+| Remus     |           |
+| Albus     |           |
+
+**Query #2**
+The cat's name, adopter's name, and adopted date for each cat adopted within the past month to be displayed as part of the "Happy Tail" social media promotion which posts recent successful adoptions.
+    WITH previous AS (
+      SELECT
+    	c.id,
+        ca.adopter_id,
+        c.name,
+        ca.date  
+      FROM cats AS c
+      JOIN cat_adoptions AS ca
+      ON c.id = ca.cat_id
+      WHERE ca.date > CURRENT_DATE - INTERVAL '30 DAYS'
+      ORDER BY c.id
+    )
+    SELECT
+      p.name AS Cat,
+      a.first_name AS Owner,
+      p.date
+    FROM previous AS p
+    JOIN adopters AS a
+    ON p.adopter_id = a.id
+    ORDER BY a.id;
+
+| cat      | owner    | date                     |
+| -------- | -------- | ------------------------ |
+| Mushi    | Arabella | 2019-04-27T00:00:00.000Z |
+| Victoire | Argus    | 2019-05-02T00:00:00.000Z |
+
+**Query #3**
+Create a list of adopters who have not yet chosen a dog to adopt.
+
+    SELECT *
+    FROM adopters AS a
+    LEFT OUTER JOIN dog_adoptions AS da
+    ON a.id = da.adopter_id
+    WHERE da.adopter_id IS NULL
+    ORDER BY a.id;
+
+| id  | first_name | last_name | address             | phone_number | adopter_id | dog_id | date | fee |
+| --- | ---------- | --------- | ------------------- | ------------ | ---------- | ------ | ---- | --- |
+| 1   | Hermione   | Granger   | 32 Granger's Street | 676-464-7837 |            |        |      |     |
+| 2   | Arabella   | Figg      | 4 Wisteria Walk     | 843-228-5239 |            |        |      |     |
+
+**Query 4**
+Lists of all cats and all dogs who have not been adopted.
+
+    WITH cats_not_adopted AS (
+    	SELECT c.name, c.age, c.gender, c.intake_date
+      	FROM cats AS c
+      	LEFT OUTER JOIN cat_adoptions AS ca
+      	ON c.id = ca.cat_id
+      	WHERE ca.date IS NULL
+      	ORDER BY c.id
+    )
+    SELECT *
+    FROM cats_not_adopted
+    UNION (
+      	SELECT d.name, d.age, d.gender, d.intake_date
+      	FROM dogs AS d
+      	LEFT OUTER JOIN dog_adoptions AS da
+      	ON d.id = da.dog_id
+      	WHERE da.date IS NULL
+    )
+    ORDER BY name;
+
+| name      | age | gender | intake_date              |
+| --------- | --- | ------ | ------------------------ |
+| Boujee    | 3   | F      | 2017-06-22T00:00:00.000Z |
+| Lassie    | 7   | F      | 2016-07-05T00:00:00.000Z |
+| Marley    | 0   | M      | 2017-05-04T00:00:00.000Z |
+| Marmaduke | 7   | M      | 2016-03-22T00:00:00.000Z |
+| Munchkin  | 0   | F      | 2017-01-13T00:00:00.000Z |
+| Nala      | 1   | F      | 2016-01-12T00:00:00.000Z |
+| Seashell  | 7   | F      | 2016-01-09T00:00:00.000Z |
+
+
+The name of the person who adopted Rosco.
+
+
+9.
+Using this Library schema and data, write queries applying the following scenarios and include the results:
+
+To determine if the library should buy more copies of a given book, please provide the names and position, in order, of all of the patrons with a hold (request for a book with all copies checked out) on "Advanced Potion-Making".
+List all of the library patrons. If they have one or more books checked out, list the books with the patrons.
+
+
+
