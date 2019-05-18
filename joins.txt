@@ -1,5 +1,6 @@
 1. How do you find related data held in two separate data tables?
 By joining tables, we can assort data from two separate tables - to find related data between tables, we might employ the use of primary and foreign keys, then use a SQL JOIN statement to combine the tables according. For example, finding all students enrolled in a certain major at a university, given a table that might contain solely student info and it's primary key 'id', and a degrees table, containing all info about the degree and a foreign key of student_id:
+
 SELECT students.name, degrees.major
 FROM students
 JOIN degrees
@@ -18,12 +19,14 @@ Foreign key - this is the key in a table that references (is equal to) the prima
 
 4. Define aliasing.
 Aliasing in SQL is essentially renaming or assigning variable names to certain expressions/columns. For instance, we may have a SELECT COUNT(*) expression - the resulting query will display COUNT(*) as the column title - maybe we want it to say simply 'Count' or 'Hits' instead. We would use the keyword AS to accomplish that task: SELECT COUNT(*) AS 'Hits'. We can similarly employee aliasing in our expressions to help avoid typing long or confusing expressions repetitively in our queries, for example:
+
 SELECT e.name AS 'Name', d.description AS 'Description'
 FROM employees AS e
 JOIN department AS d
 ON e.id = d.employee_id;
 
 5. Change this query so that you are using aliasing:
+
 SELECT 
   p.name AS 'Name',
   c.salary AS 'Salary', 
@@ -38,6 +41,7 @@ NATURAL JOIN is essentially the same as INNER JOIN, except that it will combine 
 7. Using this Employee schema and data, write queries to find the following information:
 List all employees and all shifts.
 This join does not make use of the provided scheduled_shifts, but will show us all the shifts and all the employees, regardless when they're scheduled, since some shifts are left blank, and some employees are not scheduled.
+
 SELECT *
 FROM shifts AS s
 LEFT OUTER JOIN employees AS e
@@ -155,15 +159,77 @@ Lists of all cats and all dogs who have not been adopted.
 | Nala      | 1   | F      | 2016-01-12T00:00:00.000Z |
 | Seashell  | 7   | F      | 2016-01-09T00:00:00.000Z |
 
-
+**Query #5**
 The name of the person who adopted Rosco.
 
+    WITH adopted AS (
+    	SELECT da.adopter_id, dogs.name
+    	FROM dogs
+    	JOIN dog_adoptions AS da
+    	ON dogs.id = da.dog_id
+    )
+    SELECT adopted.name, a.first_name
+    FROM adopters AS a
+    JOIN adopted
+    ON adopted.adopter_id = a.id;
+
+| name  | first_name |
+| ----- | ---------- |
+| Rosco | Argus      |
 
 9.
 Using this Library schema and data, write queries applying the following scenarios and include the results:
-
+**Query #1**
 To determine if the library should buy more copies of a given book, please provide the names and position, in order, of all of the patrons with a hold (request for a book with all copies checked out) on "Advanced Potion-Making".
+    WITH holdpatrons AS(
+    	SELECT p.name, h.isbn, h.rank
+    	FROM patrons AS p
+    	JOIN holds AS h
+    	ON p.id = h.patron_id
+    	GROUP BY 1, 2, 3
+    	ORDER BY 3
+    )
+    SELECT hp.name, hp.rank, b.title
+    FROM books AS b
+    JOIN holdpatrons AS hp
+    ON hp.isbn = b.isbn
+    WHERE b.title = 'Advanced Potion-Making';
+
+| name           | rank | title                  |
+| -------------- | ---- | ---------------------- |
+| Terry Boot     | 1    | Advanced Potion-Making |
+| Cedric Diggory | 2    | Advanced Potion-Making |
+
+**Query #2**
 List all of the library patrons. If they have one or more books checked out, list the books with the patrons.
+    WITH previous AS (
+    WITH checkedout AS (
+    	SELECT p.name, t.isbn, t.checked_in_date
+    	FROM patrons AS p
+      	JOIN transactions AS t
+    	ON p.id = t.patron_id
+        WHERE t.checked_in_date IS NULL
+    )
+    SELECT co.name, b.title
+    FROM books AS b
+    JOIN checkedout AS co
+    ON b.isbn = co.isbn
+    GROUP BY 1, 2
+    ORDER BY 1
+    )
+    
+    SELECT p.name, prev.title
+    FROM patrons AS p
+    LEFT OUTER JOIN previous AS prev
+    ON p.name = prev.name;
+
+| name             | title                                   |
+| ---------------- | --------------------------------------- |
+| Hermione Granger |                                         |
+| Terry Boot       | Advanced Potion-Making                  |
+| Padma Patil      |                                         |
+| Cho Chang        |                                         |
+| Cedric Diggory   | Fantastic Beasts and Where to Find Them |
 
 
 
